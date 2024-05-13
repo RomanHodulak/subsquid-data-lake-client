@@ -1,0 +1,11 @@
+[package]
+name = "subsquid-cli"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1.37", features = ["full"] }
+subsquid-client = { path = "../subsquid-client" }
+url = "2.5.0"
+simple_logger = "5"
+log = { version = "0.4", features = [] }
