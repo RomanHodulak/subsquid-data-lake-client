@@ -7,6 +7,8 @@
 //! [Apache Kafka](https://kafka.apache.org/).
 use log::{LevelFilter, SetLoggerError};
 use simple_logger::SimpleLogger;
+use std::io;
+use std::io::Write;
 use std::str::FromStr;
 use subsquid_client::{Client, ClientBuilder, DataSource, StartHeight};
 use url::Url;
@@ -25,12 +27,16 @@ async fn main() {
 
     tokio::spawn(async move {
         if let Err(error) = client.stream(sender, StartHeight::Latest).await {
-            eprintln!("{error}");
+            log::error!("{error}");
         }
     });
 
     while let Some(block) = receiver.recv().await {
-        print!("{block:#?}");
+        match serde_json::to_string(&block) {
+            Ok(data) => print!("{data},"),
+            Err(error) => log::error!("{error}"),
+        }
+        let _ = io::stdout().flush();
     }
 }
 
